@@ -45,17 +45,18 @@ print(line_equation)
 # now we have the linear model which allows us to transform mass into area
 # y = 130.9774 (slope - how much area changes with a change in 1 unit of mass) * x + -0.0983 (y intercept)
 
-
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Read in leaf trace masses ------
 trace.df <- read_excel("data/trace_masses.xlsx")
 
 # now we need to use the lineaer equation above to predict the 
 # unknown area from the mass of the trace
 
-# Mutate a new column of leaf area -----
+# Mutate or create a new column of leaf area -----
 trace.df <- trace.df |> 
   mutate(leaf_area_cm2 = slope * trace_mass_g + intercept)
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Graph Leaf Areas -----
 leaf_area.plot <- trace.df |> 
   ggplot(aes(x= leaf_type , y = leaf_area_cm2))+
@@ -82,7 +83,19 @@ leaf_area.plot
 ggsave(leaf_area.plot, file = "figures/leaf_area_plot.pdf", 
        width = 4, height = 4, units = "in", dpi = 300)
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Determine the mean and standard errors -----
+mean_se.df <- trace.df |>
+  group_by(leaf_type) |> 
+  summarize(
+    mean_area_cm2 = round(mean(leaf_area_cm2, na.rm = TRUE),2),
+   std_err_area =  round(sd(leaf_area_cm2, na.rm = TRUE)/sqrt(n()),2)
+  )
 
+# write the file out to a tab delimited file
+write_tsv(mean_se.df, file=("output/leaf_area_mean_se.tsv"))
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Test if means are significantly different with a T-Test ----
 # Performing the t-test
 t_test.model <- t.test(leaf_area_cm2 ~ leaf_type, data = trace.df)
@@ -90,7 +103,8 @@ t_test.model <- t.test(leaf_area_cm2 ~ leaf_type, data = trace.df)
 # Viewing the results
 print(t_test.model)
 
-# If we wanted to visualize how our T value falls on a T Distribution we can 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# If we wanted to visualize how our T value falls on a T Distribution we can -------
 # Extract t-value and degrees of freedom
 t_value <- t_test.model$statistic
 df <- t_test.model$parameter
