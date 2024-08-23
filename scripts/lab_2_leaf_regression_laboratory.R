@@ -5,7 +5,7 @@
 # install.packages("janitor")
 
 # load libraries from packages -----
-library(skimr)
+# library(skimr)
 library(readxl)
 library(tidyverse)
 
