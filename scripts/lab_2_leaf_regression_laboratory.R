@@ -19,7 +19,8 @@ regression.plot <- reg.df |>  # the data to use called a dataframe
   geom_smooth(method="lm", se=FALSE) + # adding a geometry of a smoothed line as a linear model
   labs(title="Paperweight Mass vs Area", # add plot title
        x=" Mass (g)", # add x title label
-       y="Area (cm^2)") # add y title label
+       y="Area (cm^2)",
+      caption = "Figure 1. Regression of paper area (cm^2) versus mass of paper used to predict the area of an unkown area of a leaf from the cutout weight. ") # add y title label
 regression.plot # call the plot to show
 
 # save the regression plot ---
@@ -56,6 +57,20 @@ trace.df <- read_excel("data/trace_masses.xlsx")
 trace.df <- trace.df |> 
   mutate(leaf_area_cm2 = slope * trace_mass_g + intercept)
 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Determine the mean and standard errors -----
+mean_se.df <- trace.df |>
+  group_by(leaf_type) |> 
+  summarize(
+    mean_area_cm2 = round(mean(leaf_area_cm2, na.rm = TRUE),2),
+   std_err_area =  round(sd(leaf_area_cm2, na.rm = TRUE)/sqrt(n()),2)
+  )
+
+# write the file out to a tab delimited file
+write_tsv(mean_se.df, file=("output/leaf_area_mean_se.tsv"))
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Graph Leaf Areas -----
 leaf_area.plot <- trace.df |> 
@@ -75,25 +90,16 @@ leaf_area.plot <- trace.df |>
   labs(
     title = "Leaf Area by Type",
     x = "Leaf Type",
-    y = "Area (cm^2)"
-  )
+    y = "Area (cm^2)",
+    caption = "Figure 2. Difference in mean area (cm^2 +/- 1 S.E. of sun 
+    and shade leaves from species X. THe differnece between the 
+    leaves was statistically significant with shade leaves being smaller 
+    than sun leaves (t=XXX, d.f. = XXX, p = 0.0005). ) ") # add y title label
 leaf_area.plot
 
 # save the regression plot ---
 ggsave(leaf_area.plot, file = "figures/leaf_area_plot.pdf", 
        width = 4, height = 4, units = "in", dpi = 300)
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-# Determine the mean and standard errors -----
-mean_se.df <- trace.df |>
-  group_by(leaf_type) |> 
-  summarize(
-    mean_area_cm2 = round(mean(leaf_area_cm2, na.rm = TRUE),2),
-   std_err_area =  round(sd(leaf_area_cm2, na.rm = TRUE)/sqrt(n()),2)
-  )
-
-# write the file out to a tab delimited file
-write_tsv(mean_se.df, file=("output/leaf_area_mean_se.tsv"))
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Test if means are significantly different with a T-Test ----
