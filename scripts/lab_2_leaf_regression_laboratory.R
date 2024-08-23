@@ -31,6 +31,7 @@ ggsave(regression.plot, file = "figures/regression_plot.pdf",
 # now to get the formula of the line the is in blue
 # Assuming reg.df is your data frame and linear.model is your lm object
 linear.model <- lm(area_cm2 ~ mass_g, data = reg.df)  # Refit the model if necessary
+summary(linear.model)
 
 # Extracting coefficients -0 the slope and intercept
 coefficients <- coef(linear.model)
