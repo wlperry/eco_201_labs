@@ -10,7 +10,7 @@ library(readxl)
 library(tidyverse)
 
 # load the data file from the data subdirectory
-reg.df <- read_excel("data/lab_2_paperweights.xlsx")
+reg.df <- read_excel("data/lab_2_paperweights.xlsx") 
 
 # now to look at the plot of the data
 regression.plot <- reg.df |>  # the data to use called a dataframe
@@ -49,14 +49,16 @@ print(line_equation)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Read in leaf trace masses ------
-trace.df <- read_excel("data/trace_masses.xlsx")
+trace.df <- read_excel("data/trace_masses.xlsx") 
 
 # now we need to use the lineaer equation above to predict the 
 # unknown area from the mass of the trace
 
 # Mutate or create a new column of leaf area -----
 trace.df <- trace.df |> 
-  mutate(leaf_area_cm2 = slope * trace_mass_g + intercept)
+  mutate(
+    leaf_type = tolower(leaf_type),
+    leaf_area_cm2 = slope * trace_mass_g + intercept)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
